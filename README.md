@@ -1,6 +1,6 @@
 # Examples Driven Tester
 
-[![View <File Exchange Title> on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/####-file-exchange-title) 
+[![View ExamplesDrivenTester on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://in.mathworks.com/matlabcentral/fileexchange/156374-examplesdriventester)
   
 Examples driven tester is a tool for users which uses MATLAB&reg; scripts which are already present in toolbox to provide a preliminary "smoke test" of the toolbox functionality. It runs MATLAB scripts via the [MATLAB Function-Based unit test](https://www.mathworks.com/help/matlab/function-based-unit-tests.html) framework and generates a test and code coverage report. This tool is intended for preliminary qualification or Smoke testing of toolboxes. It is recommended to add unit tests for exhaustive functional testing of your code. 
 
