@@ -217,16 +217,11 @@ classdef examplesTester < handle
         files = files(~strcmp(files, [mfilename '.m']));
         [folder, fileName, ext] = fileparts(files);
         files = fullfile(folder, fileName);
-        % files = strtok(files, '.');
         fields = erase(files, [pwd filesep]);
         files = strcat(files, ext);
         % replace filesep with _ to create valid field name
         fields = strrep(fields, filesep, '_');
-
-        % replace filesep with _ to create valid field name
-        fields = strrep(fields, filesep, '_');
         fields = strrep(fields, ' ', '__');
-        % fields = strcat([folderPath{idx} '_'], fileName);
         allFiles = [allFiles(:)' files(:)'];
         allFields = [allFields(:)' fields(:)'];
       end
@@ -237,18 +232,9 @@ classdef examplesTester < handle
       [allFields, uniqueIdx] = unique(allFields, "stable");
       allFiles = allFiles(uniqueIdx);
 
-      allFields = strrep(allFields, filesep, '_');
-      allFields = strrep(allFields, ':', '_');
-      allFields = strrep(allFields, '@', '_');
-      allFields = strrep(allFields, '+', '_');
-      allFields = strrep(allFields, '.', '');
-      allFields = strrep(allFields, '-', '');
-      allFields = strrep(allFields, '%', '');
-      allFields = strrep(allFields, '''', '');
-
-      allFields = cellfun(@(x) examplesTester.makeValidFieldName(x),...
-        allFields, 'UniformOutput', false);
-
+      % Create unique and valid field names of struct, which needs to be
+      % passed to MATLAB test infrastructure.
+      allFields = matlab.lang.makeValidName(allFields);
 
       obj.testFiles = cell2struct(allFiles, allFields, 2);
 
@@ -315,24 +301,6 @@ classdef examplesTester < handle
         if ~isempty(codeCoveragePlugin) && ~isa(codeCoveragePlugin, 'matlab.unittest.plugins.CodeCoveragePlugin')
                error("Invalid value for CodeCoveragePlugin");
         end
-    end
-
-    function fieldName = makeValidFieldName(fieldName)
-        % Function converts fieldName variable to a valid fieldName for a
-        % struct. 
-        %  * Truncates to less than 63 characters
-        %  * Remove leading _ from the string
-        %  * Make sure the name starts with a character.
-
-        if length(fieldName) > 57
-            fieldName = fieldName(end-57:end);
-            [~,fieldName] = strtok(fieldName, '_');
-            fieldName = strip(fieldName, '_');
-        end
-        % Make sure variable name starts with a letter. After truncation
-        % the first letter could be a number leading to invalid variable
-        % name. 
-        fieldName = ['f_' fieldName num2str(randi(1000))];
     end
   end
 
