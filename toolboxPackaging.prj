@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1773534768" file="L:\WorkSpaces\MathWorks\ExamplesDrivenTester\toolboxPackaging.prj" location="L:\WorkSpaces\MathWorks\ExamplesDrivenTester" name="toolboxPackaging" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="3744269955" file="L:\WorkSpace\MCT\tools\ExamplesDrivenTester\toolboxPackaging.prj" location="L:\WorkSpace\MCT\tools\ExamplesDrivenTester" name="toolboxPackaging" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>ExamplesDrivenTester</param.appname>
     <param.authnamewatermark>MathWorks</param.authnamewatermark>
     <param.email />
@@ -7,7 +7,7 @@
     <param.summary />
     <param.description>Examples driven tester is a tool for users which uses MATLAB® scripts which are already present in toolbox to provide a preliminary "smoke test" of the toolbox functionality. It runs MATLAB scripts via the MATLAB Function-Based unit test framework and generates a test and code coverage report. This tool is intended for preliminary qualification or Smoke testing of toolboxes. It is recommended to add unit tests for exhaustive functional testing of your code.</param.description>
     <param.screenshot />
-    <param.version>0.1</param.version>
+    <param.version>0.91</param.version>
     <param.output>${PROJECT_ROOT}\ExamplesDrivenTester.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -100,7 +100,6 @@
       <file>${PROJECT_ROOT}\toolbox</file>
     </fileset.rootdir>
     <fileset.rootfiles>
-      <file>${PROJECT_ROOT}\toolbox\doc</file>
       <file>${PROJECT_ROOT}\toolbox\examplesTester.m</file>
       <file>${PROJECT_ROOT}\toolbox\GettingStarted.mlx</file>
       <file>${PROJECT_ROOT}\toolbox\internal</file>
@@ -110,7 +109,7 @@
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="ExamplesDrivenTester.mltbx" optional="false">L:\WorkSpaces\MathWorks\ExamplesDrivenTester\ExamplesDrivenTester.mltbx</file>
+      <file location="${PROJECT_ROOT}" name="ExamplesDrivenTester.mltbx" optional="false">L:\WorkSpace\MCT\tools\ExamplesDrivenTester\ExamplesDrivenTester.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>

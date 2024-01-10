@@ -65,7 +65,6 @@ classdef examplesTester < handle
       obj.OutputPath = args.OutputPath;
       obj.CodeCoveragePlugin = args.CodeCoveragePlugin;
 
-      % TestFolders = string(TestFolders);
       if examplesTester.isJsonPath(TestFolders)
         obj.readTestFiles(TestFolders);
       else
@@ -93,7 +92,6 @@ classdef examplesTester < handle
       end
 
       testFilesAndFolders = Parameter.fromData('tests', obj.testFiles);
-      % testFilesAndFolders = Parameter.fromData('tests', struct("testName", cellstr(obj.Tests)));
       suite = TestSuite.fromPackage(obj.testPackage, 'ExternalParameters', testFilesAndFolders);
 
       obj.TestResults = obj.Runner.run(suite);
@@ -205,7 +203,7 @@ classdef examplesTester < handle
       for idx = 1:numel(folderPath)
 
         % Handling wildCards as input
-        if endsWith(folderPath{idx}, ".m")
+        if endsWith(folderPath{idx}, {'.m', '.mlx'})
           %get list of files based on wildCards like "*.m"
           filelist = dir(fullfile(folderPath{idx}));
         else
@@ -245,6 +243,8 @@ classdef examplesTester < handle
       allFields = strrep(allFields, '+', '_');
       allFields = strrep(allFields, '.', '');
       allFields = strrep(allFields, '-', '');
+      allFields = strrep(allFields, '%', '');
+      allFields = strrep(allFields, '''', '');
 
       allFields = cellfun(@(x) examplesTester.makeValidFieldName(x),...
         allFields, 'UniformOutput', false);
@@ -322,12 +322,17 @@ classdef examplesTester < handle
         % struct. 
         %  * Truncates to less than 63 characters
         %  * Remove leading _ from the string
+        %  * Make sure the name starts with a character.
 
-        if length(fieldName) > 63
-            fieldName = fieldName(end-63:end);
+        if length(fieldName) > 57
+            fieldName = fieldName(end-57:end);
             [~,fieldName] = strtok(fieldName, '_');
             fieldName = strip(fieldName, '_');
         end
+        % Make sure variable name starts with a letter. After truncation
+        % the first letter could be a number leading to invalid variable
+        % name. 
+        fieldName = ['f_' fieldName num2str(randi(1000))];
     end
   end
 
