@@ -28,7 +28,7 @@ classdef wrapperTest < matlab.unittest.TestCase
             testCase.applyFixture(TemporaryFolderFixture ...
                 ("PreservingOnFailure",true,"WithSuffix","_TestData"));
             try
-                myRun(tests);
+                utils.myRun(tests);
             catch ME
                 if strcmp(ME.identifier, 'MATLAB:minrhs')
                     testCase.assumeNotEqual(ME.identifier, 'MATLAB:minrhs',...
