@@ -203,6 +203,19 @@
                     <Info/>
                 </DIR_SIGNIFIER>
                 <Info/>
+                <File Location="+utils">
+                    <File Location="myRun.m">
+                        <Info>
+                            <Category UUID="FileClassCategory">
+                                <Label UUID="design"/>
+                            </Category>
+                        </Info>
+                    </File>
+                    <DIR_SIGNIFIER Location="1">
+                        <Info/>
+                    </DIR_SIGNIFIER>
+                    <Info/>
+                </File>
             </File>
             <File Location="sampleToolbox">
                 <File Location="examples">
