@@ -42,21 +42,21 @@ Run MATLAB scripts from specified folders, for e.g. "doc" and "examples" and gen
 
 ```matlab
 obj = examplesTester(["examples", "doc"]);
-obj.executesTests;
+obj.executeTests;
 ```
 
 Run MATLAB scripts from specified folders, for e.g. "doc" and "examples" but do not generate a test report
 
 ```matlab
 obj = examplesTester(["examples", "doc"], CreateTestReport = false);
-obj.executesTests;
+obj.executeTests;
 ```
 
 Run MATLAB scripts from specified folders, for e.g. "doc" and "examples" and generate a test report in PDF format.
 
 ```matlab
 obj = examplesTester(["examples", "doc"], TestReportFormat = "PDF");
-obj.executesTests;
+obj.executeTests;
 ```
 
 Run MATLAB scripts from specified folders, for e.g. "doc" and "examples" and generate a code coverage report for code placed in "code" folder.
@@ -65,7 +65,7 @@ Run MATLAB scripts from specified folders, for e.g. "doc" and "examples" and gen
 reportFormat = matlab.unittest.plugins.codecoverage.CoverageReport('coverage-report');
 covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("code", "Producing", reportFormat);
 obj = examplesTester(["examples", "doc"], CodeCoveragePlugin = covPlugin);
-obj.executesTests;
+obj.executeTests;
 ```
 
 ## License
