@@ -67,6 +67,35 @@ covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("code", "Produc
 obj = examplesTester(["examples", "doc"], CodeCoveragePlugin = covPlugin);
 obj.executeTests;
 ```
+## Integration with MATLAB's BuildTool
+Starting with MATLAB R2025a and onwards, **ExamplesDrivenTester** ships with a ready-to-use build task called `ExampleDrivenTesterTask` that provides seamless integration with MATLAB's [buildtool](https://www.mathworks.com/help/matlab/ref/buildtool.html) framework.
+
+When you install the toolbox in MATLAB R2025a+, you'll automatically get this pre-configured task that you can use directly in your build files.
+
+### Usage Examples
+Add the **ExamplesDrivenTester** task to your buildfile.m using the following patterns:
+
+Run MATLAB scripts from specified folders and generate a test report (default behavior):
+```matlab
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"]);
+```
+
+Run MATLAB scripts but do NOT generate a test report:
+```matlab
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CreateTestReport = false);
+```
+
+Run MATLAB scripts and generate a test report in PDF format:
+```matlab
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], TestReportFormat = "pdf");
+```
+Run MATLAB scripts and generate a code coverage report for code placed in the code folder:
+```matlab
+
+reportFormat = matlab.unittest.plugins.codecoverage.CoverageReport('coverage-report');
+covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("code", "Producing", reportFormat);
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CodeCoveragePlugin = covPlugin);
+```
 
 ## License
 
