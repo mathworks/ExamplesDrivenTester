@@ -68,7 +68,7 @@ obj = examplesTester(["examples", "doc"], CodeCoveragePlugin = covPlugin);
 obj.executeTests;
 ```
 ## Integration with MATLAB's BuildTool
-Starting with MATLAB R2025a and onwards, **ExamplesDrivenTester** ships with a ready-to-use build task called `ExampleDrivenTesterTask` that provides seamless integration with MATLAB's [buildtool](https://www.mathworks.com/help/matlab/ref/buildtool.html) framework.
+Starting with MATLAB R2025a and onwards, **ExamplesDrivenTester** ships with a ready-to-use build task called `ExampleDrivenTesterTask` that provides seamless integration with [MATLAB buildtool](https://www.mathworks.com/help/matlab/ref/buildtool.html) framework.
 
 When you install the toolbox in MATLAB R2025a+, you'll automatically get this pre-configured task that you can use directly in your build files.
 
