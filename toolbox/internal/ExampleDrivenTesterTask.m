@@ -10,10 +10,10 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
 
     properties
         Folders (1,:) string
-        CreateTestReport (1,1) logical = true
-        TestReportFormat (1,1) string   = "HTML"
-        OutputPath (1,1) string = "test-report"
-        CodeCoveragePlugin = []  
+        CreateTestReport (1,1) logical
+        TestReportFormat (1,1) string
+        OutputPath (1,1) string
+        CodeCoveragePlugin
     end
 
     methods
@@ -23,7 +23,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 folders (1,:) string
                 options.CreateTestReport (1,1) logical = true
                 options.TestReportFormat (1,1) string   = "html"
-                options.OutputPath(1,1) string = "test-report"
+                options.OutputPath(1,1) string = "reports"
                 options.CodeCoveragePlugin = []
             end
 
@@ -61,21 +61,21 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             end
 
             if isempty(task.CodeCoveragePlugin)
-                obj = examplesTester( ...
+                examplesRunner = examplesTester( ...
                     task.Folders, ...
                     CreateTestReport = task.CreateTestReport, ...
                     TestReportFormat = task.TestReportFormat, ...
                     OutputPath  = task.OutputPath);
             else
                 % Pass CodeCoveragePlugin through when provided
-                obj = examplesTester( ...
+                examplesRunner = examplesTester( ...
                     task.Folders, ...
                     CreateTestReport = task.CreateTestReport, ...
                     TestReportFormat = task.TestReportFormat, ...
                     OutputPath = task.OutputPath, ...
                     CodeCoveragePlugin = task.CodeCoveragePlugin);
             end
-                obj.executeTests;
+                examplesRunner.executeTests;
         end
     end
 end

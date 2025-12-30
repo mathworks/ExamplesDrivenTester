@@ -325,14 +325,23 @@
         <Info Name="ExamplesDrivenTester"/>
     </Info>
     <ProjectPath Location="Root">
-        <Reference Location="cc363181-1648-4421-ac4e-2d6d7648de9e">
-            <Info Ref="toolbox" Type="Relative"/>
+        <Reference Location="3662407c-76fc-4fb3-8e7e-6fce62c1d9b5">
+            <Info Ref="toolbox/sampleToolbox" Type="Relative"/>
+        </Reference>
+        <Reference Location="86dfaf43-70b9-417d-9678-50d5e3603b4d">
+            <Info Ref="" Type="Relative"/>
         </Reference>
         <Reference Location="91083c4d-aa37-472b-8349-2152971d6b33">
             <Info Ref="toolbox/internal" Type="Relative"/>
         </Reference>
-        <Reference Location="63162818-a3e7-4c1d-beed-3f8397983d80">
-            <Info Ref="" Type="Relative"/>
+        <Reference Location="c5fd201e-1476-499f-88cc-f6a34a4b40cd">
+            <Info Ref="toolbox/sampleToolbox/examples" Type="Relative"/>
+        </Reference>
+        <Reference Location="cc363181-1648-4421-ac4e-2d6d7648de9e">
+            <Info Ref="toolbox" Type="Relative"/>
+        </Reference>
+        <Reference Location="df5c02f8-c778-4ad0-aa2f-7169b0afefeb">
+            <Info Ref="toolbox/sampleToolbox/code" Type="Relative"/>
         </Reference>
     </ProjectPath>
     <Files Location="MLTestManagerCoverageSettings">
