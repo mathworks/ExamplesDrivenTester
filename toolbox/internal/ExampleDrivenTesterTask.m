@@ -22,8 +22,8 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             arguments
                 folders (1,:) string
                 options.CreateTestReport (1,1) logical = true
-                options.TestReportFormat (1,1) string   = "html"
-                options.OutputPath(1,1) string = "reports"
+                options.TestReportFormat (1,1) string {mustBeMember(options.TestReportFormat,["html", "pdf", "docx", "xml"])}  = "html"
+                options.OutputPath(1,1) string = "reports_" + char(datetime('now', 'Format', 'yyyyMMdd_HHmmss'))
                 options.CodeCoveragePlugin = []
             end
 
@@ -31,7 +31,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             task.Inputs = folders;
 
             % Basic validation
-            mustBeMember(options.TestReportFormat, ["html", "pdf", "docx", "xml"]);
+            % mustBeMember(options.TestReportFormat, ["html", "pdf", "docx", "xml"]);
             for f = folders
                 if ~isfolder(f)
                     error("ExampleDrivenTesterTask:FolderNotFound", ...
