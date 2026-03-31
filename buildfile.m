@@ -25,7 +25,7 @@ end
 function releaseTask(~)
 releaseFolderName = "release";
 % Create toolbox options
-opts = matlab.addons.toolbox.ToolboxOptions("toolboxPackaging.prj");
+opts = matlab.addons.toolbox.ToolboxOptions("ExamplesDrivenTester.prj");
 
 mltbxFileName = strrep(opts.ToolboxName," ","_") + ".mltbx";
 opts.OutputFile = fullfile(releaseFolderName,mltbxFileName);
