@@ -18,6 +18,13 @@ classdef wrapperTest < matlab.unittest.TestCase
             figHandles = findall(groot,'Type','figure');
             close(figHandles, "force");
         end
+
+        function runCustomCleanup(~)
+            cleanupFcn = getappdata(0, 'ExamplesTester_CleanupFcn');
+            if ~isempty(cleanupFcn)
+                cleanupFcn();
+            end
+        end
     end
 
     methods (Test)

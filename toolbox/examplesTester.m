@@ -18,6 +18,7 @@ classdef examplesTester < handle
 % TestReportFormat         - Format of test report. Possible values: "pdf", "docx" , ["html”], “xml”
 % OutputPath               - Directory where reports will be generated.  Default is "test-report"
 % CodeCoveragePlugin       - MATLAB CodeCoverage plugin. Default value is empty
+% CleanupFcn               - Function handle executed after each test method. Default is empty
 % 
 % Description
 % ------------
@@ -28,6 +29,8 @@ classdef examplesTester < handle
 % 
 % obj = examplesTester(["test", "doc"], TestReportFormat = "pdf"); creates a code coverage report in PDF format
 %
+% obj = examplesTester(["test", "doc"], CleanupFcn = @() bdclose('all')); closes all Simulink models after each test
+%
 %   Copyright 2023 The MathWorks, Inc.
 
   properties
@@ -37,6 +40,7 @@ classdef examplesTester < handle
     TestFolders (1, :) {examplesTester.validateTestFolders(TestFolders)} = pwd
     TestResults 
     CodeCoveragePlugin {examplesTester.validateCodeCoveragePlugin} = []
+    CleanupFcn {examplesTester.validateCleanupFcn} = []
   end
 
   properties (Access=private)
@@ -58,12 +62,14 @@ classdef examplesTester < handle
         args.TestReportFormat = "html"
         args.OutputPath = pwd
         args.CodeCoveragePlugin = []
+        args.CleanupFcn = []
       end
 
       obj.CreateTestReport = args.CreateTestReport;
       obj.TestReportFormat = args.TestReportFormat;
       obj.OutputPath = args.OutputPath;
       obj.CodeCoveragePlugin = args.CodeCoveragePlugin;
+      obj.CleanupFcn = args.CleanupFcn;
 
       if examplesTester.isJsonPath(TestFolders)
         obj.readTestFiles(TestFolders);
@@ -94,6 +100,8 @@ classdef examplesTester < handle
       testFilesAndFolders = Parameter.fromData('tests', obj.testFiles);
       suite = TestSuite.fromPackage(obj.testPackage, 'ExternalParameters', testFilesAndFolders);
 
+      setappdata(0, 'ExamplesTester_CleanupFcn', obj.CleanupFcn);
+      cleanupObj = onCleanup(@() rmappdata(0, 'ExamplesTester_CleanupFcn'));
       obj.TestResults = obj.Runner.run(suite);
 
     end
@@ -300,6 +308,14 @@ classdef examplesTester < handle
         % Method validates the value of CodeCoveragePlugin property
         if ~isempty(codeCoveragePlugin) && ~isa(codeCoveragePlugin, 'matlab.unittest.plugins.CodeCoveragePlugin')
                error("Invalid value for CodeCoveragePlugin");
+        end
+    end
+
+    function validateCleanupFcn(cleanupFcn)
+        % Method validates the value of CleanupFcn property
+        if ~isempty(cleanupFcn) && ~isa(cleanupFcn, 'function_handle')
+               error("examplesTester:InvalidCleanupFcn", ...
+                   "CleanupFcn must be a function handle or empty");
         end
     end
   end
