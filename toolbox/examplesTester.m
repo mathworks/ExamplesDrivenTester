@@ -142,62 +142,68 @@ classdef examplesTester < handle
       % Diagnostic record plugin enables logging in the tests
       obj.Runner.addPlugin(DiagnosticsRecordingPlugin);
 
-      if ~exist(obj.OutputPath, "dir")
-        mkdir(obj.OutputPath);
+      % Create output directory if reports are needed
+      if obj.CreateTestReport || ~isempty(obj.CodeCoveragePlugin)
+        if ~exist(obj.OutputPath, "dir")
+          mkdir(obj.OutputPath);
+        end
       end
+
       % Add code coverage plugin
       if ~isempty(obj.CodeCoveragePlugin)
         obj.Runner.addPlugin(obj.CodeCoveragePlugin)
       end
 
       % Add Test Report plugin based on user inputs
-      testReportFolder = fullfile(obj.OutputPath, 'test-report');
+      if obj.CreateTestReport
+        testReportFolder = fullfile(obj.OutputPath, 'test-report');
 
-      % Deleting already present reports folder, as overwrite does not work
-      % for different file formats
+        % Deleting already present reports folder, as overwrite does not work
+        % for different file formats
 
-      if exist(testReportFolder, "dir")
-        disp('Deleting already existing test report folder');
-        rmdir(testReportFolder, 's');
+        if exist(testReportFolder, "dir")
+          disp('Deleting already existing test report folder');
+          rmdir(testReportFolder, 's');
+        end
+        switch(obj.TestReportFormat)
+          case 'html'
+            testReportPlugin = TestReportPlugin.producingHTML(testReportFolder, ...
+              'Verbosity',4);
+
+          case 'docx'
+            % Creating a folder specifically to maintain uniformity in
+            % different formats of the report. 'html' format creates the
+            % test-report folder by default, so creating this folder for
+            % other formats
+
+            mkdir(testReportFolder);
+            testReportPlugin = TestReportPlugin.producingDOCX(fullfile(testReportFolder, 'TestReport.docx'));
+
+          case 'pdf'
+            % Creating a folder specifically to maintain uniformity in
+            % different formats of the report. 'html' format creates the
+            % test-report folder by default, so creating this folder for
+            % other formats
+
+            mkdir(testReportFolder);
+            testReportPlugin = TestReportPlugin.producingPDF(fullfile(testReportFolder, 'TestReport.pdf'));
+
+          case 'xml'
+            % Creating a folder specifically to maintain uniformity in
+            % different formats of the report. 'html' format creates the
+            % test-report folder by default, so creating this folder for
+            % other formats
+
+            mkdir(testReportFolder);
+            testReportPlugin = XMLPlugin.producingJUnitFormat(fullfile(testReportFolder, 'TestReport.xml'));
+
+          otherwise
+
+            error('TestReportFormat is invalid, It can have only following values as input: "html", "Docx", "pdf", "xml"')
+        end      
+
+        obj.Runner.addPlugin(testReportPlugin);
       end
-      switch(obj.TestReportFormat)
-        case 'html'
-          testReportPlugin = TestReportPlugin.producingHTML(testReportFolder, ...
-            'Verbosity',4);
-
-        case 'docx'
-          % Creating a folder specifically to maintain uniformity in
-          % different formats of the report. 'html' format creates the
-          % test-report folder by default, so creating this folder for
-          % other formats
-
-          mkdir(testReportFolder);
-          testReportPlugin = TestReportPlugin.producingDOCX(fullfile(testReportFolder, 'TestReport.docx'));
-
-        case 'pdf'
-          % Creating a folder specifically to maintain uniformity in
-          % different formats of the report. 'html' format creates the
-          % test-report folder by default, so creating this folder for
-          % other formats
-
-          mkdir(testReportFolder);
-          testReportPlugin = TestReportPlugin.producingPDF(fullfile(testReportFolder, 'TestReport.pdf'));
-
-        case 'xml'
-          % Creating a folder specifically to maintain uniformity in
-          % different formats of the report. 'html' format creates the
-          % test-report folder by default, so creating this folder for
-          % other formats
-
-          mkdir(testReportFolder);
-          testReportPlugin = XMLPlugin.producingJUnitFormat(fullfile(testReportFolder, 'TestReport.xml'));
-
-        otherwise
-
-          error('TestReportFormat is invalid, It can have only following values as input: "html", "Docx", "pdf", "xml"')
-      end      
-
-      obj.Runner.addPlugin(testReportPlugin);
     end
 
 

@@ -236,6 +236,43 @@ classdef tExamplesTester < matlab.unittest.TestCase
       testCase.verifyError(@()examplesTester("examples", CleanupFcn="notAFunction"), ...
         expectedError);
     end
+
+    function verifyNoReportWhenCreateTestReportFalse(testCase)
+      % Test verifies that no test report folder is created when
+      % CreateTestReport is set to false
+
+      import matlab.unittest.fixtures.TemporaryFolderFixture
+      testCase.applyFixture(TemporaryFolderFixture);
+
+      outputPath = testCase.createTemporaryFolder;
+
+      obj = examplesTester("examples", CreateTestReport=false, ...
+        OutputPath=outputPath);
+      obj.executeTests();
+
+      testReportFolder = fullfile(outputPath, 'test-report');
+      testCase.verifyEqual(exist(testReportFolder, "dir"), 0, ...
+        "Test report folder should not be created when CreateTestReport is false");
+      testCase.verifyTrue(all([obj.TestResults.Passed]), 'All tests did not pass');
+    end
+
+    function verifyNoOutputDirWhenNoReportsNeeded(testCase)
+      % Test verifies that the output directory is not created when
+      % CreateTestReport is false and no CodeCoveragePlugin is provided
+
+      import matlab.unittest.fixtures.TemporaryFolderFixture
+      testCase.applyFixture(TemporaryFolderFixture);
+
+      outputPath = fullfile(testCase.createTemporaryFolder, 'should-not-exist');
+
+      obj = examplesTester("examples", CreateTestReport=false, ...
+        OutputPath=outputPath);
+      obj.executeTests();
+
+      testCase.verifyEqual(exist(outputPath, "dir"), 0, ...
+        "Output directory should not be created when no reports are needed");
+      testCase.verifyTrue(all([obj.TestResults.Passed]), 'All tests did not pass');
+    end
   end
 
 end
