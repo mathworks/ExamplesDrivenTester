@@ -7,6 +7,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
     %       - TestReportFormat   (string)   
     %       - ReportOutputFolder (string)   
     %       - CodeCoveragePlugin (object)   
+    %       - CleanupFcn         (function_handle) - Custom cleanup function executed after each test
 
     properties
         Folders (1,:) string
@@ -14,6 +15,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
         TestReportFormat (1,1) string
         OutputPath (1,1) string
         CodeCoveragePlugin
+        CleanupFcn
     end
 
     methods
@@ -25,6 +27,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 options.TestReportFormat (1,1) string {mustBeMember(options.TestReportFormat,["html", "pdf", "docx", "xml"])}  = "html"
                 options.OutputPath(1,1) string = "reports_" + char(datetime('now', 'Format', 'yyyyMMdd_HHmmss'))
                 options.CodeCoveragePlugin = []
+                options.CleanupFcn = []
             end
 
             task.Description = "Run published examples";
@@ -44,6 +47,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             task.TestReportFormat  = options.TestReportFormat;
             task.OutputPath= options.OutputPath;
             task.CodeCoveragePlugin= options.CodeCoveragePlugin;
+            task.CleanupFcn       = options.CleanupFcn;
 
             if task.CreateTestReport 
                 task.Outputs = task.OutputPath;
@@ -60,22 +64,14 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 mkdir(task.OutputPath);
             end
 
-            if isempty(task.CodeCoveragePlugin)
-                examplesRunner = examplesTester( ...
-                    task.Folders, ...
-                    CreateTestReport = task.CreateTestReport, ...
-                    TestReportFormat = task.TestReportFormat, ...
-                    OutputPath  = task.OutputPath);
-            else
-                % Pass CodeCoveragePlugin through when provided
-                examplesRunner = examplesTester( ...
-                    task.Folders, ...
-                    CreateTestReport = task.CreateTestReport, ...
-                    TestReportFormat = task.TestReportFormat, ...
-                    OutputPath = task.OutputPath, ...
-                    CodeCoveragePlugin = task.CodeCoveragePlugin);
-            end
-                examplesRunner.executeTests;
+            examplesRunner = examplesTester( ...
+                task.Folders, ...
+                CreateTestReport = task.CreateTestReport, ...
+                TestReportFormat = task.TestReportFormat, ...
+                OutputPath = task.OutputPath, ...
+                CodeCoveragePlugin = task.CodeCoveragePlugin, ...
+                CleanupFcn = task.CleanupFcn);
+            examplesRunner.executeTests;
         end
     end
 end

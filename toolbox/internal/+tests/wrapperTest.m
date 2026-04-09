@@ -6,27 +6,23 @@ classdef wrapperTest < matlab.unittest.TestCase
     %   Copyright 2023 The MathWorks, Inc.
 
     properties (TestParameter)
-        tests =struct("testName", []);
-    end
-
-    methods (TestMethodTeardown)
-        % Teardown for each test. Each test method should start in a clean
-        % test environment (For eg. No variables in base workspace.) Code
-        % placed in this section is executed at the end of each test method
-        % below.
-        function closeAllFigures(~)
-            figHandles = findall(groot,'Type','figure');
-            close(figHandles, "force");
-        end
+        tests = struct("testName", []);
+        cleanupFcn = struct("fn", []);
     end
 
     methods (Test)
         % Test methods
 
-        function runTestFile(testCase, tests)
+        function runTestFile(testCase, tests, cleanupFcn)
             import matlab.unittest.fixtures.TemporaryFolderFixture
             testCase.applyFixture(TemporaryFolderFixture ...
                 ("PreservingOnFailure",true,"WithSuffix","_TestData"));
+
+            testCase.addTeardown(@() close(findall(groot,'Type','figure'), "force"));
+            if ~isempty(cleanupFcn)
+                testCase.addTeardown(cleanupFcn);
+            end
+
             try
                 utils.myRun(tests);
             catch ME

@@ -198,6 +198,44 @@ classdef tExamplesTester < matlab.unittest.TestCase
       expectedError = "examplesTester:NonStringTestFolder";
       testCase.verifyError(@()examplesTester(23), expectedError);
     end
+
+    function verifyCleanupFcnIsCalledPerTest(testCase)
+      % Test verifies that a user-provided CleanupFcn is called once
+      % per test method execution
+
+      import matlab.unittest.fixtures.TemporaryFolderFixture
+      testCase.applyFixture(TemporaryFolderFixture);
+
+      cleanupCallCount = 0;
+      function incrementCount()
+        cleanupCallCount = cleanupCallCount + 1;
+      end
+
+      obj = examplesTester("examples", ...
+        CleanupFcn=@incrementCount);
+      obj.OutputPath = testCase.createTemporaryFolder;
+      obj.executeTests();
+
+      expectedCount = numel(obj.TestResults);
+      testCase.verifyEqual(cleanupCallCount, expectedCount, ...
+        "CleanupFcn should be called once per test method");
+      testCase.verifyTrue(all([obj.TestResults.Passed]), 'All tests did not pass');
+    end
+
+    function verifyCleanupFcnDefaultIsEmpty(testCase)
+      % Test verifies that CleanupFcn defaults to empty
+      obj = examplesTester("examples");
+      testCase.verifyEmpty(obj.CleanupFcn, ...
+        "Default value of CleanupFcn should be empty");
+    end
+
+    function verifyInvalidCleanupFcn(testCase)
+      % Verify appropriate error is thrown when CleanupFcn is not a
+      % function handle
+      expectedError = "examplesTester:InvalidCleanupFcn";
+      testCase.verifyError(@()examplesTester("examples", CleanupFcn="notAFunction"), ...
+        expectedError);
+    end
   end
 
 end

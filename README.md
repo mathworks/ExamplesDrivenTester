@@ -33,6 +33,7 @@ Examples driven tester is a tool for users which uses MATLAB&reg; scripts which 
 * **TestReportFormat**           - Format of test report. ***Possible values:** "pdf", "docx" , ["html”], “xml”*
 * **OutputPath**                 - Directory where reports will be generated.  Default is pwd.
 * **CodeCoveragePlugin**         - [MATLAB Code Coverage plugin](https://www.mathworks.com/help/matlab/ref/matlab.unittest.plugins.codecoverageplugin-class.html).
+* **CleanupFcn**                 - Function handle executed after each test method for custom cleanup (e.g., closing Simulink models). Default is empty.
 
 ***Note:** Values enclosed in square braces are default values.*
 
@@ -67,6 +68,25 @@ covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("code", "Produc
 obj = examplesTester(["examples", "doc"], CodeCoveragePlugin = covPlugin);
 obj.executeTests;
 ```
+
+Run MATLAB scripts from specified folders and close all Simulink models after each test.
+
+```matlab
+obj = examplesTester(["examples", "doc"], CleanupFcn = @() bdclose('all'));
+obj.executeTests;
+```
+
+Run MATLAB scripts with a custom cleanup function that performs multiple cleanup steps.
+
+```matlab
+obj = examplesTester(["examples", "doc"], CleanupFcn = @myCleanup);
+obj.executeTests;
+
+function myCleanup()
+    bdclose('all');           % Close Simulink models
+    Simulink.sdi.clear;      % Clear Signal Data Inspector
+end
+```
 ## Integration with MATLAB's BuildTool
 From MATLAB R2025a and onwards, users can use the `ExampleDrivenTesterTask`, a ready-to-use buildtool task shipped with ExamplesDrivenTester for automated example testing.
 
@@ -95,6 +115,11 @@ plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], TestReportForm
 reportFormat = matlab.unittest.plugins.codecoverage.CoverageReport('coverage-report');
 covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("code", "Producing", reportFormat);
 plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CodeCoveragePlugin = covPlugin);
+```
+
+5. Run MATLAB scripts with a custom cleanup function (e.g., close Simulink models after each test):
+```matlab
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CleanupFcn = @() bdclose('all'));
 ```
 
 ## License
