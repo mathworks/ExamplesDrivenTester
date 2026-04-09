@@ -31,10 +31,8 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             end
 
             task.Description = "Run published examples";
-            task.Inputs = folders;
 
             % Basic validation
-            % mustBeMember(options.TestReportFormat, ["html", "pdf", "docx", "xml"]);
             for f = folders
                 if ~isfolder(f)
                     error("ExampleDrivenTesterTask:FolderNotFound", ...
@@ -49,18 +47,20 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             task.CodeCoveragePlugin= options.CodeCoveragePlugin;
             task.CleanupFcn       = options.CleanupFcn;
 
-            if task.CreateTestReport 
-                task.Outputs = task.OutputPath;
-            else
-                task.Outputs = string.empty;
-            end
+            % Track actual files inside folders for incremental build
+            inputGlobs = [folders + "/**/*.m", folders + "/**/*.mlx"];
+            task.Inputs = inputGlobs;
+
+            % Always set output to a stamp file so buildtool can
+            % determine if the task is up-to-date
+            task.Outputs = fullfile(task.OutputPath, ".last_run");
         end
     end
 
     methods (TaskAction, Sealed, Hidden)
 
         function runExampleTests(task, ~)
-            if task.CreateTestReport && ~isfolder(task.OutputPath)
+            if ~isfolder(task.OutputPath)
                 mkdir(task.OutputPath);
             end
 
@@ -72,6 +72,11 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 CodeCoveragePlugin = task.CodeCoveragePlugin, ...
                 CleanupFcn = task.CleanupFcn);
             examplesRunner.executeTests;
+
+            % Write stamp file for incremental build tracking
+            stampFile = fullfile(task.OutputPath, ".last_run");
+            fid = fopen(stampFile, 'w');
+            fclose(fid);
         end
     end
 end
