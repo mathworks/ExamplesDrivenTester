@@ -98,10 +98,9 @@ classdef examplesTester < handle
       end
 
       testFilesAndFolders = Parameter.fromData('tests', obj.testFiles);
-      suite = TestSuite.fromPackage(obj.testPackage, 'ExternalParameters', testFilesAndFolders);
+      cleanupParam = Parameter.fromData('cleanupFcn', struct('fn', {obj.CleanupFcn}));
+      suite = TestSuite.fromPackage(obj.testPackage, 'ExternalParameters', [testFilesAndFolders, cleanupParam]);
 
-      setappdata(0, 'ExamplesTester_CleanupFcn', obj.CleanupFcn);
-      cleanupObj = onCleanup(@() rmappdata(0, 'ExamplesTester_CleanupFcn'));
       obj.TestResults = obj.Runner.run(suite);
 
     end
@@ -166,7 +165,7 @@ classdef examplesTester < handle
           testReportPlugin = TestReportPlugin.producingHTML(testReportFolder, ...
             'Verbosity',4);
 
-        case 'Docx'
+        case 'docx'
           % Creating a folder specifically to maintain uniformity in
           % different formats of the report. 'html' format creates the
           % test-report folder by default, so creating this folder for

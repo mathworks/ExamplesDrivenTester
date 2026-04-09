@@ -199,9 +199,9 @@ classdef tExamplesTester < matlab.unittest.TestCase
       testCase.verifyError(@()examplesTester(23), expectedError);
     end
 
-    function verifyCleanupFcnIsCalled(testCase)
-      % Test verifies that a user-provided CleanupFcn is called after
-      % each test method execution
+    function verifyCleanupFcnIsCalledPerTest(testCase)
+      % Test verifies that a user-provided CleanupFcn is called once
+      % per test method execution
 
       import matlab.unittest.fixtures.TemporaryFolderFixture
       testCase.applyFixture(TemporaryFolderFixture);
@@ -216,8 +216,9 @@ classdef tExamplesTester < matlab.unittest.TestCase
       obj.OutputPath = testCase.createTemporaryFolder;
       obj.executeTests();
 
-      testCase.verifyGreaterThan(cleanupCallCount, 0, ...
-        "CleanupFcn was not called during test execution");
+      expectedCount = numel(obj.TestResults);
+      testCase.verifyEqual(cleanupCallCount, expectedCount, ...
+        "CleanupFcn should be called once per test method");
       testCase.verifyTrue(all([obj.TestResults.Passed]), 'All tests did not pass');
     end
 
