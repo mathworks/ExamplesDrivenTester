@@ -25,7 +25,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 folders (1,:) string
                 options.CreateTestReport (1,1) logical = true
                 options.TestReportFormat (1,1) string {mustBeMember(options.TestReportFormat,["html", "pdf", "docx", "xml"])}  = "html"
-                options.OutputPath(1,1) string = "reports_" + char(datetime('now', 'Format', 'yyyyMMdd_HHmmss'))
+                options.OutputPath(1,1) string = "test-report"
                 options.CodeCoveragePlugin = []
                 options.CleanupFcn = []
             end
