@@ -122,6 +122,12 @@ plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CodeCoveragePl
 plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CleanupFcn = @() bdclose('all'));
 ```
 
+6. Enable incremental build support by specifying `SourceFiles`. The task will only re-run when source or example files change:
+```matlab
+plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], SourceFiles = "src");
+```
+Without `SourceFiles`, the task runs every time (same as the built-in `TestTask`).
+
 ## License
 
 The license is available in the [LICENSE.txt](license.txt) file within this repository

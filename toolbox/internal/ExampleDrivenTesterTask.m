@@ -3,7 +3,7 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
     %   Inputs:
     %       - Folders: string array of M-script locations (test files)
     %   Optional Inputs:
-    %       - SourceFiles        (string)   - Source code folders under test
+    %       - SourceFiles        (string)   - Source code folders; enables incremental build when provided
     %       - CreateTestReport   (logical)
     %       - TestReportFormat   (string)
     %       - ReportOutputFolder (string)

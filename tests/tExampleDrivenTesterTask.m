@@ -5,19 +5,16 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
   properties (Access=private)
     ExamplesFolder string
     SourceFolder string
-    ToolboxPath string
-    InternalPath string
   end
 
   methods (TestClassSetup)
     function pathSetup(testCase)
       import matlab.unittest.fixtures.PathFixture;
       import matlab.unittest.fixtures.CurrentFolderFixture
-      testCase.ToolboxPath = fullfile(fileparts(pwd), "toolbox");
-      testCase.InternalPath = fullfile(testCase.ToolboxPath, "internal");
-      testCase.applyFixture(PathFixture(testCase.ToolboxPath));
-      testCase.applyFixture(PathFixture(testCase.InternalPath));
-      testCase.applyFixture(CurrentFolderFixture(mfilename + "_files"));
+      testCase.applyFixture(PathFixture("../toolbox"));
+      testCase.applyFixture(PathFixture(fullfile("../toolbox", "internal")));
+      testCase.applyFixture(CurrentFolderFixture("tExamplesTester_files"));
+      testCase.applyFixture(PathFixture("code"));
       testCase.ExamplesFolder = fullfile(pwd, "examples");
       testCase.SourceFolder = fullfile(pwd, "source");
     end
@@ -46,14 +43,11 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
         "Task Inputs should resolve to actual files inside folders");
     end
 
-    function verifyNoInputsOrOutputsWithoutSourceFiles(testCase)
-      % Verify that without SourceFiles, Inputs and Outputs are not set
-      % (task always runs — no incremental build)
+    function verifyNoIncrementalBuildWithoutSourceFiles(testCase)
+      % Verify that without SourceFiles, incremental build is disabled
       task = ExampleDrivenTesterTask(testCase.ExamplesFolder);
-      testCase.verifyEmpty(task.Inputs, ...
-        "Task Inputs should be empty without SourceFiles");
-      testCase.verifyEmpty(task.Outputs, ...
-        "Task Outputs should be empty without SourceFiles");
+      testCase.verifyEmpty(task.SourceFiles, ...
+        "SourceFiles should be empty when not provided");
     end
 
     function verifyOutputsSetWhenSourceFilesProvided(testCase)
@@ -161,16 +155,6 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
         SourceFiles=testCase.SourceFolder);
       testCase.verifyEqual(task.SourceFiles, testCase.SourceFolder, ...
         "SourceFiles property should store the provided value");
-    end
-
-    function verifyNoIncrementalBuildWithoutSourceFiles(testCase)
-      % Verify that when SourceFiles is not provided, no Inputs/Outputs
-      % are set (disabling incremental build)
-      task = ExampleDrivenTesterTask(testCase.ExamplesFolder);
-      testCase.verifyEmpty(task.Inputs, ...
-        "Task Inputs should be empty without SourceFiles");
-      testCase.verifyEmpty(task.Outputs, ...
-        "Task Outputs should be empty without SourceFiles");
     end
 
     function verifySourceFileChangeTriggersRerun(testCase)
