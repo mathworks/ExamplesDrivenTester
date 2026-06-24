@@ -16,7 +16,9 @@ plan("test") = TestTask('./tests');
 % Run MATLAB scripts from specified folder and generate a code coverage report
 reportFormat = matlab.unittest.plugins.codecoverage.CoverageReport('coverage-report');
 covPlugin = matlab.unittest.plugins.CodeCoveragePlugin.forFolder("toolbox/sampleToolbox/code", "Producing", reportFormat);
-plan("runExample") = ExampleDrivenTesterTask("toolbox/sampleToolbox/examples", CodeCoveragePlugin = covPlugin);
+plan("runExample") = ExampleDrivenTesterTask("toolbox/sampleToolbox/examples", ...
+    SourceFiles = "toolbox/sampleToolbox/code", ...
+    CodeCoveragePlugin = covPlugin);
 
 plan.DefaultTasks = "test";
 
