@@ -51,13 +51,14 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
             task.CodeCoveragePlugin= options.CodeCoveragePlugin;
             task.CleanupFcn       = options.CleanupFcn;
 
-            % Incremental build is only enabled when SourceFiles is provided.
-            % Without SourceFiles, the task always runs (matches TestTask behavior).
-            if ~isempty(options.SourceFiles)
+            % Incremental build requires SourceFiles AND an output artifact
+            % (test report or code coverage report). Without either, the task
+            % always runs (matches TestTask behavior).
+            if ~isempty(options.SourceFiles) && (task.CreateTestReport || ~isempty(task.CodeCoveragePlugin))
                 inputGlobs = [folders + "/**/*.m", folders + "/**/*.mlx", ...
                               options.SourceFiles + "/**/*.m", options.SourceFiles + "/**/*.mlx"];
                 task.Inputs = inputGlobs;
-                task.Outputs = fullfile(task.OutputPath, ".last_run");
+                task.Outputs = task.OutputPath;
             end
         end
     end
@@ -65,10 +66,6 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
     methods (TaskAction, Sealed, Hidden)
 
         function runExampleTests(task, ~)
-            if ~isfolder(task.OutputPath)
-                mkdir(task.OutputPath);
-            end
-
             examplesRunner = examplesTester( ...
                 task.Folders, ...
                 CreateTestReport = task.CreateTestReport, ...
@@ -77,13 +74,6 @@ classdef ExampleDrivenTesterTask < matlab.buildtool.Task
                 CodeCoveragePlugin = task.CodeCoveragePlugin, ...
                 CleanupFcn = task.CleanupFcn);
             examplesRunner.executeTests;
-
-            % Write stamp file only when incremental build is enabled
-            if ~isempty(task.SourceFiles)
-                stampFile = fullfile(task.OutputPath, ".last_run");
-                fid = fopen(stampFile, 'w');
-                fclose(fid);
-            end
         end
     end
 end

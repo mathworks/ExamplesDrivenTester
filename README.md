@@ -126,7 +126,7 @@ plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], CleanupFcn = @
 ```matlab
 plan("runExample") = ExampleDrivenTesterTask(["examples", "doc"], SourceFiles = "src");
 ```
-Without `SourceFiles`, the task runs every time (same as the built-in `TestTask`).
+Incremental build requires `SourceFiles` and an output artifact (test report or code coverage report). Without either, the task runs every time (same as the built-in `TestTask`).
 
 ## License
 

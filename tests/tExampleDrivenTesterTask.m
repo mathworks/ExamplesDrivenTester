@@ -58,9 +58,8 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
         "Task Outputs should be set when SourceFiles is provided");
     end
 
-    function verifyStampFileCreatedAfterRun(testCase)
-      % Verify that the stamp file is created after task execution
-      % when SourceFiles is provided
+    function verifyReportCreatedAfterRun(testCase)
+      % Verify that the test report is created after task execution
       import matlab.unittest.fixtures.TemporaryFolderFixture
       testCase.applyFixture(TemporaryFolderFixture);
 
@@ -70,9 +69,8 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
         SourceFiles=testCase.SourceFolder, OutputPath=outputPath);
       run(plan, "runExample");
 
-      stampFile = fullfile(outputPath, ".last_run");
-      testCase.verifyEqual(exist(stampFile, "file"), 2, ...
-        "Stamp file should be created after task execution");
+      testCase.verifyEqual(exist(outputPath, "dir"), 7, ...
+        "Output folder should exist after task execution");
     end
 
     function verifyIncrementalBuildSkipsWhenUpToDate(testCase)
@@ -129,14 +127,21 @@ classdef tExampleDrivenTesterTask < matlab.unittest.TestCase
       testCase.verifyTrue(hasMlx, "Task Inputs should include .mlx files");
     end
 
-    function verifyOutputStampFileLocation(testCase)
-      % Verify the stamp file output path is correctly set
+    function verifyOutputPathSetAsTaskOutput(testCase)
+      % Verify the OutputPath is set as task Outputs
       outputPath = testCase.createTemporaryFolder;
       task = ExampleDrivenTesterTask(testCase.ExamplesFolder, ...
         SourceFiles=testCase.SourceFolder, OutputPath=outputPath);
-      outputPaths = task.Outputs.paths;
-      testCase.verifyTrue(any(endsWith(outputPaths, ".last_run")), ...
-        "Task Outputs should contain the .last_run stamp file");
+      testCase.verifyNotEmpty(task.Outputs, ...
+        "Task Outputs should be set to the report output path");
+    end
+
+    function verifyNoIncrementalBuildWithoutReport(testCase)
+      % Verify that incremental build is disabled when no report is produced
+      task = ExampleDrivenTesterTask(testCase.ExamplesFolder, ...
+        SourceFiles=testCase.SourceFolder, CreateTestReport=false);
+      testCase.verifyEmpty(task.Inputs, ...
+        "Task Inputs should be empty when no output artifact is produced");
     end
 
     function verifySourceFilesTrackedInInputs(testCase)
